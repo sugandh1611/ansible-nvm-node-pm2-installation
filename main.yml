@@ -2,21 +2,21 @@
 
   tasks:
 
-    - name: Install NVM version 
+    - name: Install NVM
       shell: >
         curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
       args:
         executable: /bin/bash
-        chdir: "{{ ansible_env.HOME }}"
-        creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+        chdir: "/home/vagrant/"
+        creates: "/home/vagrant/.nvm/nvm.sh"
 
-    - name: Install node version 12.16.1
+    - name: Install Node
       shell: >
-        . {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install 12.16.1
+        . /home/vagrant/.nvm/nvm.sh && nvm install 12.16.1
       args:
         executable: /bin/bash
-        chdir: "{{ ansible_env.HOME }}"
-        creates: "{{ ansible_env.HOME }}/.nvm/versions/12.16.1"
+        chdir: "/home/vagrant"
+        creates: "/home/vagrant/.nvm/versions/12.16.1"
 
     - name: Install pm2 package
       npm:
@@ -26,14 +26,25 @@
 
     - name: Symbolic link for node
       file:
-          src: "{{ ansible_env.HOME }}/.nvm/versions/node/v12.16.1/bin/node"
+          src: "/home/vagrant/.nvm/versions/node/v12.16.1/bin/node"
           dest: "/usr/local/bin/node"
           state: link
       become: yes
 
     - name: Symbolic link for pm2
       file:
-          src: "{{ ansible_env.HOME }}/.nvm/versions/node/v12.16.1/bin/pm2"
+          src: "/home/vagrant/.nvm/versions/node/v12.16.1/bin/pm2"
           dest: "/usr/local/bin/pm2"
           state: link
+      become: yes
+
+    - name: Install epel-release
+      yum:
+          name: epel-release
+          state: present
+
+    - name: Install nginx
+      yum:
+          name: nginx
+          state: present
       become: yes
